@@ -6,47 +6,58 @@
 const { codeBlock } = require("@discordjs/builders");
 
 /*
-  MESSAGE CLEAN FUNCTION
-  "Clean" removes @everyone pings, as well as tokens, and makes code blocks
-  escaped so they're shown more easily. As a bonus it resolves promises
-  and stringifies objects!
-  This is mostly only used by the Eval and Exec commands.
+    MESSAGE CLEAN FUNCTION
+    "Clean" removes @everyone pings, as well as tokens, and makes code blocks
+    escaped so they're shown more easily. As a bonus it resolves promises
+    and stringifies objects!
+    This is mostly only used by the Eval and Exec commands.
 */
 async function clean(client, text) {
-  if (text && text.constructor.name == "Promise")
-    text = await text;
-  if (typeof text !== "string")
-    text = require("util").inspect(text, {depth: 1});
+    if (text && text.constructor.name == "Promise")
+        text = await text;
+    if (typeof text !== "string")
+        text = require("util").inspect(text, {depth: 1});
 
-  text = text
-    .replace(/`/g, "`" + String.fromCharCode(8203))
-    .replace(/@/g, "@" + String.fromCharCode(8203));
+    text = text
+        .replace(/`/g, "`" + String.fromCharCode(8203))
+        .replace(/@/g, "@" + String.fromCharCode(8203));
 
-  text = text.replaceAll(client.token, "[REDACTED]");
+    text = text.replaceAll(client.token, "[REDACTED]");
 
-  return text;
+    return text;
 }
 
 // However it's, like, super ultra useful for troubleshooting and doing stuff
 // you don't want to put in a command.
 exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
-  const code = args.join(" ");
-  const evaled = eval(code);
-  const cleaned = await clean(client, evaled);
-  message.channel.send(codeBlock("js", cleaned));
+    const code = args.join(" ");
+    const evaled = eval(code);
+    const cleaned = await clean(client, evaled);
+    const output = cleaned.match(/(.|[\r\n]){1,1536}/g);
+    if (message.flags.includes("no-output")) {
+        return;
+    } else {
+        if (message.flags.includes("no-limit")) {
+            output.forEach(chunk => message.channel.send(codeBlock("js", chunk)));
+        } else {
+            for (let a=0; a < 10; a++) { //output.length omitted
+                message.channel.send(codeBlock("js", output[a]));
+            };
+        };
+    };
 };
 
 exports.conf = {
-  enabled: true,
-  guildOnly: false,
-  cooldown: "1s",
-  aliases: [],
-  permLevel: "Bot Owner"
+    enabled: true,
+    guildOnly: false,
+    cooldown: "1s",
+    aliases: [],
+    permLevel: "Bot Owner"
 };
 
 exports.help = {
-  name: "eval",
-  category: "System",
-  description: "Evaluates arbitrary javascript.",
-  usage: "eval <...code>"
+    name: "eval",
+    category: "System",
+    description: "Evaluates arbitrary javascript.",
+    usage: "eval <...code>"
 };
