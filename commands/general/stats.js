@@ -1,15 +1,15 @@
-const { version, MessageEmbed } = require('discord.js');
+const { version, EmbedBuilder } = require('discord.js');
 const { DurationFormatter } = require('@sapphire/time-utilities');
 const durationFormatter = new DurationFormatter();
 
 exports.run = (client, message) => {
 	// eslint-disable-line no-unused-vars
 	const duration = durationFormatter.format(client.uptime);
-	const statsEmbed = new MessageEmbed()
+	const statsEmbed = new EmbedBuilder()
 		.setColor(`RANDOM`)
 		.setTitle(`Bot Stats`)
 		.setDescription(`Stats of the bot :P`)
-		.addFields(
+		.addFields([
 			{
 				name: `Memory Usage`,
 				value: `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(
@@ -38,7 +38,7 @@ exports.run = (client, message) => {
 			},
 			{ name: `Discord.js Version`, value: `v${version}`, inline: true },
 			{ name: `Node Version`, value: `${process.version}`, inline: true }
-		)
+		])
 		.setFooter(
 			`Bot Owner: ${
 				client.users.cache.find(u => u.id === process.env.owner).tag

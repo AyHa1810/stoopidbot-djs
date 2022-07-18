@@ -1,14 +1,13 @@
-const Discord = require("discord.js");
 const { parse } = require("twemoji-parser");
 const { toProperCase, testImage } = require("../../modules/functions.js");
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder: MessageEmbed, parseEmoji } = require("discord.js");
 const Color = `RANDOM`;
 
 exports.run = async (client, message, args) => {
     const emoji = args[0];
     if (!emoji) return message.channel.send("Bruh give an emoji to steal!");
 
-    let customemoji = Discord.Util.parseEmoji(emoji);
+    let customemoji = parseEmoji(emoji);
 
     if (customemoji.id) {
         const link = `https://cdn.discordapp.com/emojis/${customemoji.id}.${

@@ -10,7 +10,7 @@ if (Number(process.version.slice(1).split(".")[0]) < 16) throw new Error("Node 1
 // loads  required constants and dependencies
 require("dotenv").config();
 const { Client, Collection } = require("discord.js");
-const { readdirSync } = require("fs");
+const { readdirSync } = require("node:fs");
 const { intents, partials, permLevels } = require("./config.js");
 const { getSubDir, getFiles } = require("./modules/functions.js");
 const logger = require("./modules/logger.js");

@@ -1,4 +1,4 @@
-const { codeBlock } = require("@discordjs/builders");
+const { codeBlock } = require("discord.js");
 const config = require("../../config.js");
 const { awaitReply } = require("../../modules/functions.js");
 const { settings } = require("../../modules/settings.js");
@@ -7,7 +7,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
 
   // Retrieve Default Values from the default settings in the bot.
   const defaults = settings.get("default");
-  const replying = settings.ensure(message.guild.id, config.defaultSettings).commandReply;
+  const replying = settings.ensure(message.guildId, config.defaultSettings).commandReply;
 
   // Adding a new key adds it to every guild (it will be visible to all of them)
   if (action === "add") {

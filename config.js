@@ -1,7 +1,7 @@
 // config.js : sets the default bot configuration
 
 // sets the required dependencies
-const { Intents } = require('discord.js');
+const { GatewayIntentBits, Partials, PermissionsBitField } = require('discord.js');
 
 // default configuration for the bot
 const config = {
@@ -17,11 +17,12 @@ const config = {
 
     //idk lol
     intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.DIRECT_MESSAGES
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.DirectMessages
     ],
-    partials: ['CHANNEL'],
+    partials: [Partials.Channel],
 
     // default settings for the bot
     defaultSettings: {
@@ -54,20 +55,20 @@ const config = {
             check: message => {
                 try {
                     const perms = [
-                        'MANAGE_ROLES',
-                        'MANAGE_NICKNAMES',
-                        'MANAGE_CHANNELS',
-                        'MANAGE_MESSAGES',
-                        'MANAGE_THREADS',
-                        'MUTE_MEMBERS',
-                        'KICK_MEMBERS',
-                        'BAN_MEMBERS',
-                        'READ_MESSAGES',
-                        'SEND_MESSAGES'
+                        PermissionsBitField.Flags.ManageRoles,
+                        PermissionsBitField.Flags.ManageNicknames,
+                        PermissionsBitField.Flags.ManageChannels,
+                        PermissionsBitField.Flags.ManageMessages,
+                        PermissionsBitField.Flags.ManageThreads,
+                        PermissionsBitField.Flags.MuteMembers,
+                        PermissionsBitField.Flags.KickMembers,
+                        PermissionsBitField.Flags.BanMembers,
+                        PermissionsBitField.Flags.ReadMessages,
+                        PermissionsBitField.Flags.SendMessages
                     ];
                     if (
-                        message.member.permission.has(perms) &&
-                        message.member.permission.has('ADMINISTRATOR')
+                        message.member.permissions.has(perms) &&
+                        message.member.permissions.has(PermissionsBitField.Flags.Administrator)
                     )
                         return true;
                 } catch (e) {
@@ -82,7 +83,7 @@ const config = {
             name: 'Administrator',
             check: message => {
                 try {
-                    const perms = ['ADMINISTRATOR'];
+                    const perms = [PermissionsBitField.Flags.Administrator];
                     if (message.member.permission.has(perms)) return true;
                 } catch (e) {
                     return false;
@@ -95,7 +96,7 @@ const config = {
             level: 4,
             name: 'Server Owner',
             check: message => {
-                const serverOwner = message.author ?? message.user;
+                const serverOwner = message.author ?? message.author;
                 return message.guild?.ownerId === serverOwner.id;
             },
             exception: []
