@@ -3,7 +3,7 @@ const { getSettings, permlevel } = require("../modules/functions.js");
 const config = require("../config.js");
 
 module.exports = async (client, interaction) => {
-    if (!interaction.isCommand()) return;
+    if (!interaction.isChatInputCommand()) return;
 
     const settings = interaction.settings = getSettings(interaction.guild);
 

@@ -1,5 +1,5 @@
 // set.js : changes the bot settings in a server
-const { codeBlock } = require("@discordjs/builders");
+const { codeBlock } = require("discord.js");
 const { settings } = require("../../modules/settings.js");
 const { awaitReply } = require("../../modules/functions.js");
 
@@ -8,9 +8,9 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
     // Retrieve current guild settings (merged) and overrides only.
     const serverSettings = message.settings;
     const defaults = settings.get("default");
-    const overrides = settings.get(message.guild.id);
+    const overrides = settings.get(message.guildId);
     const replying = serverSettings.commandReply;
-    if (!settings.has(message.guild.id)) settings.set(message.guild.id, {});
+    if (!settings.has(message.guildId)) settings.set(message.guildId, {});
 
     // Edit an existing key value
     if (action === "edit") {
@@ -25,10 +25,10 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
         if (joinedValue === serverSettings[key]) return message.reply({ content: "This setting already has that value!", allowedMentions: { repliedUser: (replying === "true") }});
 
         // If the guild does not have any overrides, initialize it.
-        if (!settings.has(message.guild.id)) settings.set(message.guild.id, {});
+        if (!settings.has(message.guildId)) settings.set(message.guildId, {});
 
         // Modify the guild overrides directly.
-        settings.set(message.guild.id, joinedValue, key);
+        settings.set(message.guildId, joinedValue, key);
 
         // Confirm everything is fine!
         message.reply({ content: `${key} successfully edited to ${joinedValue}`, allowedMentions: { repliedUser: (replying === "true") }});

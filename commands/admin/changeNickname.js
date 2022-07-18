@@ -2,7 +2,7 @@
 exports.run = async (client, message, args, level) => {
     const nick = args[0];
     if (!nick) return message.channel.send("bruh specify a nickname to set!")
-    message.guild.me.setNickname(nick);
+    message.guild.members.me.setNickname(nick);
     return message.channel.send("Nickname changed to " + nick)
 };
 

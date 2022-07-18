@@ -1,6 +1,5 @@
-const { codeBlock } = require("@discordjs/builders");
 const { toProperCase, msConvert } = require("../../modules/functions.js");
-const { MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, SelectMenuBuilder, codeBlock } = require('discord.js');
 
 exports.run = (client, message, args, level, addCD, interaction) => {
   const { container } = client;
@@ -19,7 +18,7 @@ exports.run = (client, message, args, level, addCD, interaction) => {
     let currentCategory = "";
 /**
   //let output = `= Command List =\n[Use ${settings.prefix}help <commandname> for details]\n`; 
-    const output = new MessageEmbed()
+    const output = new EmbedBuilder()
       .setColor('RANDOM')
       .setTitle('Command List')
       .setDescription('Use ${settings.prefix}help <commandname> for details')
@@ -39,9 +38,9 @@ exports.run = (client, message, args, level, addCD, interaction) => {
       output.addField('${settings.prefix}${c.help.name}', '${c.help.description}', true);;
     })
 */
-    const row = new MessageActionRow()
-			.addComponents(
-				new MessageSelectMenu()
+    const row = new ActionRowBuilder()
+			.addComponents([
+				new SelectMenuBuilder()
 					.setCustomId('select')
 					.setPlaceholder('Nothing selected')
 					.addOptions([
@@ -56,14 +55,14 @@ exports.run = (client, message, args, level, addCD, interaction) => {
 							value: 'second_option',
 						},
 					]),
-			);
+        ]);
 
-	  var embed = new MessageEmbed();
-	  embed.setColor(`RANDOM`);
+	  var embed = new EmbedBuilder();
+	  embed.setColor(`Random`);
 		embed.setTitle(`Command List`);
     embed.setDescription(`Use ${settings.prefix}help <commandname> for details`);
 		embed.setTimestamp();
-    embed.setFooter(`page`);
+    embed.setFooter({ text: `e` });
 
     const sorted = enabledCommands.sort((p, c) => p.help.category > c.help.category ? 1 : 
       p.help.name > c.help.name && p.help.category === c.help.category ? 1 : -1 );
@@ -96,16 +95,16 @@ exports.run = (client, message, args, level, addCD, interaction) => {
         cmdAliases = "none";
       }
 
-      var embed = new MessageEmbed();
-      embed.setColor(`RANDOM`);
+      var embed = new EmbedBuilder();
+      embed.setColor(`Random`);
       embed.setTitle(`${message.settings.prefix}${command.help.name} info`);
-      embed.addFields(
+      embed.addFields([
         { name: `Description`, value: `${command.help.description}`, inline: false },
         { name: `Usage`, value: `\`\`\`\n${message.settings.prefix}${command.help.usage}\n\`\`\``, inline: false },
         { name: `Aliases`, value: `${cmdAliases}`, inline: false },
         { name: `Cooldown`, value: `${command.conf.cooldown}`, inline: false},
         { name: `Premission Level`, value: `${command.conf.permLevel}`, inline: false },
-      );
+      ]);
       embed.setFooter(`Usage Syntax: <required> [optional]`);
 
       message.channel.send({ embeds: [embed] });

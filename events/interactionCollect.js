@@ -1,10 +1,11 @@
 const logger = require("../modules/logger.js");
 const config = require("../config.js");
+const { ComponentType } = require("discord.js");
 
 module.exports = async (client, interaction) => {
   if (!interaction.isButton() && !interaction.isSelectMenu()) return;
   
-  const collector = message.createMessageComponentCollector({ componentType: 'BUTTON', time: 15000 });
+  const collector = message.createMessageComponentCollector({ componentType: ComponentType.Button, time: 15000 });
 
   collector.on('collect', i => {
     if (i.user.id === interaction.user.id) {
