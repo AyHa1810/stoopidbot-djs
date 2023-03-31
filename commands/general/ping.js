@@ -1,6 +1,6 @@
 // ping.js : pings the bot and returns ping info
 
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 const { msConvert } = require("../../modules/functions.js");
 
 exports.run = async (client, message) => {
@@ -11,16 +11,19 @@ exports.run = async (client, message) => {
         }
     })
 
-    const pingEmbed = new MessageEmbed()
+    const pingEmbed = new EmbedBuilder()
         .setTitle("Ping")
         .addFields(
-            { name: "Message-bot", value: `${botMsg.createdAt - message.createdAt} ms` },
+            { name: "Bot", value: `${botMsg.createdAt - message.createdAt} ms` },
             { name: "API", value: `${Math.round(client.ws.ping)} ms` },
             { name: "Uptime", value: `${msConvert(client.uptime)}` }
         )
         .setColor("#18191b")
         .setTimestamp()
-        .setFooter("Requested by" + message.author.tag, message.author.displayAvatarURL()); 
+        .setFooter({
+            text: "Requested by" + message.author.tag, 
+            iconURL: message.author.displayAvatarURL()
+        }); 
 
       botMsg.edit({content:"\u200B", embeds: [pingEmbed]}).catch(() => botMsg.edit("An unknown error occurred. Do I have required permissions?"));
 };

@@ -14,7 +14,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
 
     // Edit an existing key value
     if (action === "edit") {
-        // User must specify a key.
+    // User must specify a key.
     if (!key) return message.reply({ content: "Please specify a key to edit", allowedMentions: { repliedUser: (replying === "true") }});
         // User must specify a key that actually exists!
         if (!defaults[key]) return message.reply({ content: "This key does not exist in the settings", allowedMentions: { repliedUser: (replying === "true") }});
@@ -64,7 +64,7 @@ exports.run = async (client, message, [action, key, ...value], level) => { // es
         // Otherwise, the default action is to return the whole configuration
         const array = [];
         Object.entries(serverSettings).forEach(([key, value]) => {
-            array.push(`${key}${" ".repeat(20 - key.length)}::  ${value}`); 
+            array.push(`${key}${" ".repeat(20 - key.length)}::  ${value}`);
         });
         await message.channel.send(codeBlock("asciidoc", `= Current Guild Settings = \n${array.join("\n")}`));
     }

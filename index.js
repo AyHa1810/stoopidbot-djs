@@ -30,13 +30,22 @@ for (let i = 0; i < permLevels.length; i++) {
     levelCache[thisLevel.name] = thisLevel.level;
 };
 
+// Container for deleted messages for Snipe commands
+const snipes = {};
+const editSnipes = {};
+const reactionSnipes = {};
+
 // a single container property which we can attach everything
 // we need to reduce client pollution
 client.container = {
     commands,
     aliases,
     slashcmds,
-    levelCache
+    levelCache,
+
+    snipes,
+    editSnipes,
+    reactionSnipes
 };
 
 // fancy node 8 async/await function to wrap stuff in an anonymous function.
@@ -52,7 +61,7 @@ const init = async () => {
         props.conf.aliases.forEach(alias => {
             client.container.aliases.set(alias, props.help.name);
         });
-    }
+    };
 
     // loads slash cmds in "./slash" directory
     //const slashFiles = readdirSync("./slash").filter(file => file.endsWith(".js"));
@@ -64,7 +73,7 @@ const init = async () => {
 
         // sets the name of the bot with its properties
         client.container.slashcmds.set(command.commandData.name, command);
-    }
+    };
 
     // loads events in "./events" directory
     //const eventFiles = readdirSync("./events/").filter(file => file.endsWith(".js"));
@@ -75,31 +84,24 @@ const init = async () => {
         const event = require(`./events/${file}`);
         // binds the client to any event, before the existing arguments
         client.on(eventName, event.bind(null, client));
-    }
+    };
 
     // joins a thread everytime if it gets created, not required here for now ig
     // you can create a threadCreate.js file in ./events if you want to do stuff idk
     //client.on("threadCreate", (thread) => thread.join());
 
+    // sets login timeout
+    async function killBot() {
+        console.error("Timelimit exceeded, login failed!");
+        process.exit(1)
+    };
+    let timeout = setTimeout(killBot, 6000);
+
     // logins the client
     client.login(process.env.token);
-    /** this function exits the client with exit code 1 if the login exceeds the set timelimit
-    var Promise = require("bluebird");
-    var elt = new Promise((resolve, reject) => {
-        function (param, (err) => {
-            if (err) reject(err);
-            client.login(process.env.token);
-            resolve();
-        }
-    });
 
-    elt.timeout(60000).then(() => console.log('done'))
-        .catch(Promise.TimeoutError, (e) => {
-            console.log("Timelimit exceeded, login failed!"); 
-            process.exit(1)
-        }) */
-
-    // end of top-level async/await function
+    // Removes the timeout set for the login
+    if (timeout) clearTimeout(timeout);
 };
 
 init();

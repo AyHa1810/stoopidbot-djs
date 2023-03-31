@@ -26,7 +26,7 @@ exports.run = (client, message, args, level) => {
 };
 
 exports.conf = {
-	enabled: true,
+	enabled: false,
 	guildOnly: false,
 	cooldown: '1s',
 	aliases: [],
@@ -36,6 +36,6 @@ exports.conf = {
 exports.help = {
 	name: 'ssh',
 	category: 'General',
-	description: 'starts bot session',
+	description: 'starts ssh session',
 	usage: 'ssh <user@server-ip:port> <password/authkey>'
 };

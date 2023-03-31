@@ -43,6 +43,6 @@ const categories = [
         permLevel: 'Administrator',
         description: 'Admin commands, don\'t abuse lol'
     }
-],
+];
 
 modules.exports = categories;

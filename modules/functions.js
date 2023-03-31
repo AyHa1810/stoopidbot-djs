@@ -64,7 +64,7 @@ async function awaitReply(msg, question, limit = 60000) {
     }
 }
 
-// toProperCase(String) returns a proper-cased string such as: 
+// toProperCase(String) returns a proper-cased string such as:
 // toProperCase("Mary had a little lamb") returns "Mary Had A Little Lamb"
 function toProperCase(string) {
     return string.replace(/([^\W_]+[^\s-]*) */g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
@@ -169,7 +169,47 @@ function getUserFromMention(mention) {
     }
 }
 
+function testImage(url, timeoutT) {
+    return new Promise(function (resolve, reject) {
+        var timeout = timeoutT || 5000;
+        var timer, img = new Image();
+        img.onerror = img.onabort = function () {
+            clearTimeout(timer);
+            reject("error");
+        };
+        img.onload = function () {
+            clearTimeout(timer);
+            resolve("success");
+        };
+        timer = setTimeout(function () {
+            // reset .src to invalid URL so it stops previous
+            // loading, but doesn't trigger new load
+            img.src = "//!!!!/test.jpg";
+            reject("timeout");
+        }, timeout);
+        img.src = url;
+    });
+}
 
+const formatEmoji = (emoji) => {
+	return !emoji.id || emoji.available
+		? emoji.toString() // bot has access or unicode emoji
+		: `[:${emoji.name}:](${emoji.url})`; // bot cannot use the emoji
+};
+
+function randomColor(str) {
+    let maxVal = 0xFFFFFF;
+    let randomNumber = Math.random() * maxVal;
+    randomNumber = Math.floor(randomNumber);
+    if (str == true) {
+        randomNumber = randomNumber.toString(16);
+        let randColor = randomNumber.padStart(6, 0);
+        return `0x${randColor.toUpperCase()}`;
+    }
+    else {
+        return randomNumber;
+    }
+};
 
 process.on("uncaughtException", (err) => {
     const errorMsg = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
@@ -183,4 +223,5 @@ process.on("unhandledRejection", err => {
     console.error(err);
 });
 
-module.exports = { permlevel, getSettings, awaitReply, toProperCase, msConvert, getFiles, getSubDir, timer, getUserFromMention };
+module.exports = { permlevel, getSettings, awaitReply, toProperCase, msConvert, getFiles,
+    getSubDir, timer, getUserFromMention, testImage, formatEmoji, randomColor };

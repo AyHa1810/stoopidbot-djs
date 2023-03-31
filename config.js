@@ -1,13 +1,14 @@
 // config.js : sets the default bot configuration
 
 // sets the required dependencies
-const { Intents } = require('discord.js');
+const { GatewayIntentBits, Partials } = require('discord.js');
 
 // default configuration for the bot
 const config = {
     bot: {
-        name: "AyHa1810Bot",
-        version: "0.1-alpha"
+        name: "stoopid",
+        version: "0.2-alpha",
+        description: ""
     },
 
     // array of user IDs that sets the user as the bot admin
@@ -17,15 +18,29 @@ const config = {
 
     //idk lol
     intents: [
-        Intents.FLAGS.GUILDS,
-        Intents.FLAGS.GUILD_MESSAGES,
-        Intents.FLAGS.DIRECT_MESSAGES
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildEmojisAndStickers,
+        GatewayIntentBits.GuildInvites,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.MessageContent
     ],
-    partials: ['CHANNEL'],
+    partials: [
+        Partials.Channel,
+        Partials.GuildMember,
+        Partials.GuildScheduledEvent,
+        Partials.Message, 
+        Partials.Reaction,
+        Partials.ThreadMember,
+        Partials.User
+    ],
 
     // default settings for the bot
     defaultSettings: {
         prefix: '.dev ',
+        gptprefix: 'gpt',
         systemNotice: 'true',
         commandReply: 'true',
         welcomeMessage: [
@@ -66,7 +81,7 @@ const config = {
                         'SEND_MESSAGES'
                     ];
                     if (
-                        message.member.permission.has(perms) &&
+                        message.member.permission.has(perms) ||
                         message.member.permission.has('ADMINISTRATOR')
                     )
                         return true;

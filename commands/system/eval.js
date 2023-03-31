@@ -29,20 +29,18 @@ async function clean(client, text) {
 
 // However it's, like, super ultra useful for troubleshooting and doing stuff
 // you don't want to put in a command.
-exports.run = async (client, message, args, level) => { // eslint-disable-line no-unused-vars
+exports.run = async (client, message, args, flags) => { // eslint-disable-line no-unused-vars
     const code = args.join(" ");
     const evaled = eval(code);
     const cleaned = await clean(client, evaled);
     const output = cleaned.match(/(.|[\r\n]){1,1536}/g);
-    if (message.flags.includes("no-output")) {
+    if (flags.length && flags.includes("no-output")) {
         return;
+    } else if (flags.length && flags.includes("no-limit")) {
+        output.forEach(chunk => message.channel.send(codeBlock("js", chunk)));
     } else {
-        if (message.flags.includes("no-limit")) {
-            output.forEach(chunk => message.channel.send(codeBlock("js", chunk)));
-        } else {
-            for (let a=0; a < 10; a++) { //output.length omitted
-                message.channel.send(codeBlock("js", output[a]));
-            };
+        for (a=0; a < output.slice(0, 9).length; a++) { //output.length omitted
+            message.channel.send(codeBlock("js", output[a]));
         };
     };
 };
