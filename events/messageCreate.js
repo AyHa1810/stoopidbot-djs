@@ -7,8 +7,9 @@
 const logger = require("../modules/logger.js");
 const { getSettings, permlevel, msConvert, timer } = require("../modules/functions.js");
 const config = require("../config.js");
-const { codeBlock } = require("@discordjs/builders");
-const db = require("quick.db");
+//const { codeBlock } = require("@discordjs/builders");
+const { QuickDB } = require("quick.db");
+const db = new QuickDB();
 const convToMs = require("ms");
 const talkedRecently = new Set();
 
@@ -19,7 +20,7 @@ module.exports = async (client, message) => {
     if (message.author.bot) return; // if the author is a bot, then return
 
     if(message.content.toLowerCase() == 'ok') {
-        let count = db.fetch(`countWord_${message.guild.id}_${message.author.id}`);
+        let count = await db.get(`countWord_${message.guild.id}_${message.author.id}`);
         db.set(`countWord_${message.guild.id}_${message.author.id}`, count + 1);
     }
 
@@ -50,8 +51,19 @@ module.exports = async (client, message) => {
             args.push(match[1] ? match[1] : match[0]);
         }
     } while (match != null);
-    //var void1 = args.shift();
     const command = args.shift().toLowerCase(); //shifts the args to all lower case and separates the first arg from the array as the command
+
+    var flags = [];
+    var i = 0;
+    while (i < args.length) {
+        if (args[i][0] === "-") {
+            flags.push(args.splice(i, 1)[0].slice(1));
+        };
+        i++
+    };
+    //while (args[0] && args[0][0] === "-") {
+    //    flags.push(args.shift().slice(1));
+    //};
 
     // fetches the message author if the bot doesn't finds the author as a member of the guild
     if (message.guild && !message.member) await message.guild.members.fetch(message.author);
@@ -73,7 +85,7 @@ module.exports = async (client, message) => {
             /**return message.channel.send(`You do not have permission to use this command.
 Your permission level is ${level} (${config.permLevels.find(l => l.level === level).name})
 This command requires level ${container.levelCache[cmd.conf.permLevel]} (${cmd.conf.permLevel})`);*/
-            return message.channel.send(`You don't have required permissions to use this command. You must be a ${config.permLevels.find(l => l.level === level).name} to use this command.`);
+            return message.channel.send(`You must be a ${cmd.conf.permLevel} to use this command.`);
         } else {
             return;
         }
@@ -95,42 +107,16 @@ This command requires level ${container.levelCache[cmd.conf.permLevel]} (${cmd.c
 
     message.author.permLevel = level; // idk how to explain this one lol
 
-    message.flags = [];
-    while (args[1] && args[1][1] === "-") {
-        message.flags.push(args.shift().slice(1));
-    }
-
     // logging command input for debugging
-    logger.log("cmd: " + command + "; args: [" + args + "]; flags: [" + message.flags + "]", "debug");
+    logger.log("cmd: " + command + "; args: [" + args + "]; flags: [" + flags + "]", "debug");
 
     // runs the command after the jobs is applied, throws error message if an error occurs
     try {
-        await cmd.run(client, message, args, level);
+        await cmd.run(client, message, args, flags, level);
         logger.log(`${config.permLevels.find(l => l.level === level).name} ${message.author.id} ran command ${cmd.help.name}`, "cmd");
     } catch (e) {
         console.error(e);
         message.channel.send({ content: `There was a problem with your request.\n\`\`\`${e.message}\`\`\`` })
             .catch(e => console.error("An error occurred replying on an error", e));
     };
-/**
-    if (debugging = true) {
-        async function clean(client, text) {
-            if (text && text.constructor.name == "Promise")
-                text = await text;
-            if (typeof text !== "string")
-            text = require("util").inspect(text, {depth: 1});
-
-            text = text
-                .replace(/`/g, "`" + String.fromCharCode(8203))
-                .replace(/@/g, "@" + String.fromCharCode(8203));
-
-            text = text.replaceAll(client.token, "[REDACTED]");
-
-            return text;
-        }
-        //const code = args.join(" ");
-        const evaled = eval(code);
-        const cleaned = await clean(client, evaled);
-        //message.channel.send(codeBlock("js", cleaned));
-    } */
 };
