@@ -81,8 +81,8 @@ const config = {
                         'SEND_MESSAGES'
                     ];
                     if (
-                        message.member.permission.has(perms) ||
-                        message.member.permission.has('ADMINISTRATOR')
+                        message.member.permissions.has(perms) ||
+                        message.member.permissions.has('ADMINISTRATOR')
                     )
                         return true;
                 } catch (e) {
@@ -98,7 +98,7 @@ const config = {
             check: message => {
                 try {
                     const perms = ['ADMINISTRATOR'];
-                    if (message.member.permission.has(perms)) return true;
+                    if (message.member.permissions.has(perms)) return true;
                 } catch (e) {
                     return false;
                 }

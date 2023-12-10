@@ -18,7 +18,7 @@ exports.run = async (client, message, args) => {
 
     if (message.type === MessageType.Reply) {
         const msg = await message.fetchReference();
-        console.log(msg);
+        //console.log(msg);
 
         if (emoji = emoteRegex.exec(msg.content)) {
             emoji = emoji[0]
