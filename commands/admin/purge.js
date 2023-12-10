@@ -8,7 +8,8 @@ exports.run = async (client, message, args, level) => {
         let msg = await message.fetchReference();
         message.channel.send("\"" + msg.content + "\" holy shit this works too")
             .then(m => setTimeout(() => { m.delete() }, 2069));
-        return message.delete();
+        msg.delete();
+        return message.delete()
     };
 
     if (!/^\d+$/.test(args[0])) return message.reply('Please provide a valid number');
